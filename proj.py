@@ -10,6 +10,9 @@ for line in f:
         t = line.split("\t")
         if t[0] != t[1]:
             G.add_edge(t[0],t[1],weight = 0)
-T = nx.minimum_spanning_tree(G)
-for j in list(G.edges()):
-    print(nx.shortest_path(T, source = j[0], target = j[1]))
+T1 = nx.minimum_spanning_tree(G, algorithm = "prim")
+T2 = nx.minimum_spanning_tree(G, algorithm = "kruskal")
+Gc = nx.Graph()
+# for j in list(G.edges()):
+    # print(nx.shortest_path(T, source = j[0], target = j[1]))
+print(len(list(T1.edges())))
