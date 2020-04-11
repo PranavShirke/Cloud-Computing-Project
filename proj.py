@@ -8,4 +8,8 @@ for line in f:
     if i > 4:
         line = line.replace("\n","")
         t = line.split("\t")
-        G.add_edge(t[0],t[1])
+        if t[0] != t[1]:
+            G.add_edge(t[0],t[1],weight = 0)
+T = nx.minimum_spanning_tree(G)
+for j in list(G.edges()):
+    print(nx.shortest_path(T, source = j[0], target = j[1]))
