@@ -22,11 +22,15 @@ def mutation(G):
     l1 = list(G.edges(t[td1]))
     l2 = list(G.edges(t[td2]))
     for item in l1:
-        G.remove_edge(item[0],item[1])
-        G.add_edge(t[td2],item[1])
+        x = np.random.randint(0, 2)
+        if x % 2 == 0:
+            G.remove_edge(item[0],item[1])
+            G.add_edge(t[td2],item[1])
     for item in l2:
-        G.remove_edge(item[0],item[1])
-        G.add_edge(t[td1],item[1])
+        x = np.random.randint(0, 2)
+        if x % 2 == 0:
+            G.remove_edge(item[0],item[1])
+            G.add_edge(t[td1],item[1])
 
 
 
