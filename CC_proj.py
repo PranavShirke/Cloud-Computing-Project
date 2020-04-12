@@ -25,6 +25,7 @@ def main():
 		mdegree1 =0
 		sum2=0
 		mdegree2=0
+		c=0
 		for j in list(G1.nodes()):
 			sum1+=G1.degree(j)
 			if G1.degree(j)>mdegree1:
