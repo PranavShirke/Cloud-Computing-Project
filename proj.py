@@ -1,6 +1,44 @@
 import networkx.algorithms.approximation
 import networkx as nx
 import numpy as np
+from numpy import random
+
+
+
+def crossover (G1,G2):
+
+    Gc1 = nx.Graph()
+    Gc2 = nx.Graph()
+    t1 = list(G1.edges())
+    t2 = list(G2.edges())
+    x = random.randint(0,len(t1))
+    for j in range(x):
+        #print(G1.get_edge_data(*t1[j])['weight'])
+        Gc1.add_edge(*t1[j],weight = G1.get_edge_data(*t1[j])['weight'])	
+
+    z = x
+    #print(x)
+    for k in range(len(t2)-1,x,-1):
+            if z == len(t1):
+                break
+            else:
+                if t2[k] not in t1 : 
+                    Gc1.add_edge(*t2[k], weight = G1.get_edge_data(*t2[k])['weight'])
+            z=z+1
+    x = random.randint(0,len(t2))
+    for j in range(x):
+        Gc2.add_edge(*t2[j],weight = G1.get_edge_data(*t2[j])['weight'])
+
+    z=x
+    for k in range(len(t1)-1,x,-1):
+            if z == len(t1):
+                break
+            else:
+                if t1[k] not in t2 : 
+                    Gc2.add_edge(*t1[k], weight = G1.get_edge_data(*t1[k])['weight'])
+            z=z+1
+    return Gc1, Gc2
+
 
 
 def add_new_node(G):
@@ -24,14 +62,16 @@ def mutation(G):
     for item in l1:
         x = np.random.randint(0, 2)
         if x % 2 == 0:
+            w =  G.get_edge_data(item[0], item[1])['weight']
             G.remove_edge(item[0],item[1])
-            G.add_edge(t[td2],item[1])
+            G.add_edge(t[td2],item[1], weight = w)
     for item in l2:
         x = np.random.randint(0, 2)
         if x % 2 == 0:
+            w =  G.get_edge_data(item[0], item[1])['weight']
             G.remove_edge(item[0],item[1])
-            G.add_edge(t[td1],item[1])
-
+            G.add_edge(t[td1],item[1], weight = w)
+    return G
 
 
 def min_cut_edge(G):
@@ -43,9 +83,13 @@ def time_delay(G):
     return nx.Graph.size(T)
 
 
+def fitness(x):
+    return 2
 
 
-
+n = 9 #number of genes
+niter = 10
+genes = []
 f = open("as19971108.txt","r")
 G = nx.Graph()
 i =  0
@@ -57,8 +101,38 @@ for line in f:
         if t[0] != t[1]:
             # x = (np.random.rand()%10)/10
             G.add_edge(t[0],t[1],weight = 1)
-mutation(G)
 
+#generate initial population
+
+genes.append(G)
+for i in range(n):
+    genes.append(mutation(G))
+n = n+1
+# genes = [1,2,3,4,5,6,7,7,8,10]
+score = []
+
+for q in range(niter):
+    score = []
+    children = []
+    children_score = []
+    for i in range(n):
+        score.append(fitness(genes[i]))
+    # score = score/np.sum(score)
+    for i in range(int(n/2)):
+        x = np.random.choice(n, 2, p=score/np.sum(score))
+        a, b = crossover(genes[x[0]],genes[x[1]])
+        children.append(a)
+        children.append(b)
+        children_score.append(fitness(a))
+        children_score.append(fitness(b))
+    score = list(score)
+    genes.extend(children)
+    score.extend(children_score)
+    genes = [x for _,x in sorted(zip(score,genes), key = lambda x: x[0], reverse = True)][:n]
+    score = sorted(score, reverse = True)[:n]
+
+print(score)
+print(genes)
 
 
 
