@@ -86,7 +86,7 @@ def time_delay(G):
 def fitness(x):
     return 2
 
-
+mutation_rate = 5 #mutation rate
 n = 9 #number of genes
 niter = 10
 genes = []
@@ -125,12 +125,16 @@ for q in range(niter):
         children.append(b)
         children_score.append(fitness(a))
         children_score.append(fitness(b))
+    # genes = list(genes)
     score = list(score)
     genes.extend(children)
     score.extend(children_score)
     genes = [x for _,x in sorted(zip(score,genes), key = lambda x: x[0], reverse = True)][:n]
-    score = sorted(score, reverse = True)[:n]
-
+    for i in range(n):
+        x = np.random.choice(100)
+        if x < mutation_rate:
+            genes[i] = mutation(G)
+    print('here')
 print(score)
 print(genes)
 
