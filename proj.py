@@ -154,7 +154,10 @@ for q in range(niter):
     for i in range(n):
         x = np.random.choice(100)
         if x < mutation_rate:
-            genes[i] = mutation(G)
+            t = mutation(G)
+            while(nx.is_connected(t)==False):
+                t = mutation(t)            
+            genes[i] = t
             score[i] = fitness(genes[i])
     print('here')
 print(score)
