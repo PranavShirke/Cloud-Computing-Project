@@ -86,9 +86,10 @@ def time_delay(G):
 def fitness(x):
     return 2
 
-mutation_rate = 5 #mutation rate
+mutation_rate = 5
 n = 9 #number of genes
 niter = 10
+child_option = 1 #whether to mutate children if disconnected or wether to simply drop them
 genes = []
 f = open("as19971108.txt","r")
 G = nx.Graph()
@@ -105,35 +106,56 @@ for line in f:
 #generate initial population
 
 genes.append(G)
+t = mutation(G)
 for i in range(n):
-    genes.append(mutation(G))
+    while(nx.is_connected(t)==False):
+        t = mutation(t)
+        # print('here1')
+    genes.append(t)
+    # print('here2')
 n = n+1
 # genes = [1,2,3,4,5,6,7,7,8,10]
 score = []
+for i in range(n):
+    score.append(fitness(genes[i]))
 
 for q in range(niter):
-    score = []
     children = []
     children_score = []
-    for i in range(n):
-        score.append(fitness(genes[i]))
     # score = score/np.sum(score)
     for i in range(int(n/2)):
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
-        children.append(a)
-        children.append(b)
-        children_score.append(fitness(a))
-        children_score.append(fitness(b))
+        if child_option == 0:
+            while(nx.is_connected(a)==False):
+                a = mutation(a)
+                print('here1')
+            while(nx.is_connected(b)==False):
+                b = mutation(b)
+                print('here2')
+            children.append(a)
+            children.append(b)
+            children_score.append(fitness(a))
+            children_score.append(fitness(b))
+        else:
+            if nx.is_connected(a)==True:
+                children.append(a)
+                children_score.append(fitness(a))
+            if nx.is_connected(b)==True:
+                children.append(b)
+                children_score.append(fitness(b))
+        
     # genes = list(genes)
     score = list(score)
     genes.extend(children)
     score.extend(children_score)
     genes = [x for _,x in sorted(zip(score,genes), key = lambda x: x[0], reverse = True)][:n]
+    score = sorted(score, reverse = True)[:n]
     for i in range(n):
         x = np.random.choice(100)
         if x < mutation_rate:
             genes[i] = mutation(G)
+            score[i] = fitness(genes[i])
     print('here')
 print(score)
 print(genes)
