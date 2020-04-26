@@ -123,7 +123,7 @@ def time_delay(G):
 
 def fitness(x):
     if (max_degree(x)+avg_degree(x))!=0:
-        return (1/(max_degree(x)+avg_degree(x)))#+min_cut_edge(x,(time_delay(x))
+        return (1/(max_degree(x)+avg_degree(x)+x.size(weight='weight')))#+min_cut_edge(x,(time_delay(x))
     else:
         return 1 #(
 
