@@ -90,8 +90,12 @@ def avg_degree(G):
     else:
         return 0
     
-
-
+def normalize(scoret):
+    tmax = np.max(scoret, axis = 0)
+    score = []
+    for i in scoret:
+        score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3])))
+    return score
 
 def mutation(G):
     t = list(G.nodes())
@@ -146,34 +150,16 @@ def fitness(x):
             print(g)
         s=(f/(max_degree(x)+avg_degree(x))+g)
         #print((max_degree(x)+avg_degree(x)))
-        return ([f,g,max_degree,avg_degree])#+min_cut_edge(x,) 
+        return ([f,g,max_degree(x),avg_degree(x)])#+min_cut_edge(x,) 
     else:
         return 1 #(
-
-mutation_rate = 5 #mutation rate
-n = 9 #number of genes
-niter = 10
-genes = []
-f = open("test.txt","r")
-G = nx.Graph()
-i =  0
-for line in f:
-    i = i+1
-    if i > 4:
-        line = line.replace("\n","")
-        t = line.split("\t")
-        if t[0] != t[1]:
-            # x = (np.random.rand()%10)/10
-            G.add_edge(t[0],t[1],weight = 1)
-
-#generate initial population
 
 mutation_rate = 5
 n = 9 #number of genes
 niter = 10
 child_option = 1 #whether to mutate children if disconnected or wether to simply drop them
 genes = []
-f = open("test.txt","r")
+f = open("as19971108.txt","r")
 G = nx.Graph()
 i =  0
 for line in f:
@@ -189,7 +175,7 @@ for line in f:
 
 genes.append(G)
 t = mutation(G)
-print(n)
+# print(n)
 for i in range(n):
     while(nx.is_connected(t)==False):
         t = mutation(t)
@@ -202,10 +188,7 @@ score = []
 scoret = []
 for i in range(n):
     scoret.append(fitness(genes[i]))
-tmax = np.max(scoret, axis = 0)
-for i in np.shape(scoret)[0]:
-    score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3])))
-
+score = normalize(scoret)
 for q in range(niter):
     children = []
     children_score = []
@@ -219,10 +202,10 @@ for q in range(niter):
              if nx.is_empty(a)==False and nx.is_empty(b)==False:
                 while(nx.is_connected(a)==False):
                     a = mutation(a)
-                    print('here1')
+                    # print('here1')
                 while(nx.is_connected(b)==False):
                     b = mutation(b)
-                    print('here2')
+                    # print('here2')
                 children.append(a)
                 children.append(b)
                 children_score.append(fitness(a))
@@ -237,13 +220,10 @@ for q in range(niter):
                     children_score.append(fitness(b))
             
     # genes = list(genes)
-    scoret = list(scoret)
+    # scoret = list(scoret)
     genes.extend(children)
     scoret.extend(children_score)
-    score = []
-    tmax = np.max(scoret, axis = 0)
-    for i in np.shape(scoret)[0]:
-        score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3])))
+    score = normalize(scoret)
     genes = [x for _,x in sorted(zip(score,genes), key = lambda x: x[0], reverse = True)][:n]
     scoret = [x for _,x in sorted(zip(score,scoret), key = lambda x: x[0], reverse = True)][:n]
     score = sorted(score , reverse = True)[:n]
@@ -254,7 +234,8 @@ for q in range(niter):
             while(nx.is_connected(t)==False):
                 t = mutation(t)            
             genes[i] = t
-            score[i] = fitness(genes[i])
+            scoret[i] = fitness(genes[i])
+            score = normalize(scoret)
     print('here')
 print(score)
 print(genes)
