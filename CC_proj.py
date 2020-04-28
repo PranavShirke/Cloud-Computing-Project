@@ -2,7 +2,9 @@ import networkx.algorithms.approximation
 import networkx as nx
 import numpy as np
 from numpy import random
-
+from func_timeout import func_timeout, FunctionTimedOut
+import time
+import timeout_decorator
 
 
 def crossover (G1,G2):
@@ -70,6 +72,7 @@ def add_new_node(G):
 
 def max_degree(G):
     mdegree =0
+   
     for j in list(G.nodes()):
             if G.degree(j)>mdegree:
                 mdegree=G.degree(j)
@@ -86,6 +89,7 @@ def avg_degree(G):
         return avgdegree
     else:
         return 0
+    
 
 
 
@@ -111,19 +115,38 @@ def mutation(G):
 
     return G
 
-
+@timeout_decorator.timeout(5, timeout_exception=FunctionTimedOut)
 def min_cut_edge(G):
     return len(nx.minimum_edge_cut(G))
 
 
+@timeout_decorator.timeout(5, timeout_exception=FunctionTimedOut)
 def time_delay(G):
-    T = nx.algorithms.approximation.steinertree.metric_closure(G)
-    return nx.Graph.size(T)
+         T = nx.algorithms.approximation.steinertree.metric_closure(G)
+         return nx.Graph.size(T)
+
+
+    #T = nx.algorithms.approximation.steinertree.metric_closure(G,weight='weight')
+    
 
 
 def fitness(x):
     if (max_degree(x)+avg_degree(x))!=0:
-        return (1/(max_degree(x)+avg_degree(x)+x.size(weight='weight')))#+min_cut_edge(x,(time_delay(x))
+        try:
+            f = min_cut_edge(x)
+            print(f)
+        except FunctionTimedOut:
+            f = 20
+            print(f)
+        try:
+            g = time_delay(x)
+            print(g)
+        except FunctionTimedOut:
+            g = 15
+            print(g)
+        s=(f/(max_degree(x)+avg_degree(x))+g)
+        #print((max_degree(x)+avg_degree(x)))
+        return (s)#+min_cut_edge(x,) 
     else:
         return 1 #(
 
@@ -166,6 +189,7 @@ for line in f:
 
 genes.append(G)
 t = mutation(G)
+print(n)
 for i in range(n):
     while(nx.is_connected(t)==False):
         t = mutation(t)
@@ -183,8 +207,10 @@ for q in range(niter):
     children_score = []
     # score = score/np.sum(score)
     for i in range(int(n/2)):
+        print(score)
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
+        print(100)
         if child_option == 0:
              if nx.is_empty(a)==False and nx.is_empty(b)==False:
                 while(nx.is_connected(a)==False):
@@ -211,7 +237,7 @@ for q in range(niter):
     genes.extend(children)
     score.extend(children_score)
     genes = [x for _,x in sorted(zip(score,genes), key = lambda x: x[0], reverse = True)][:n]
-    score = sorted(score, reverse = True)[:n]
+    score = sorted(score , reverse = True)[:n]
     for i in range(n):
         x = np.random.choice(100)
         if x < mutation_rate:
