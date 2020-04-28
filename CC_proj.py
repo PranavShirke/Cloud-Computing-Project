@@ -87,11 +87,8 @@ def normalize(scoret):
     tmax = np.max(scoret, axis = 0)
     score = []
     for i in scoret:
-        score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3]))+(i[4]/tmax[4]))
+        score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3])+(i[4]/tmax[4])))
     return score
-
-
-
 
 def mutation(G):
     t = list(G.nodes())
@@ -114,31 +111,6 @@ def mutation(G):
                 G.add_edge(t[td1],item[1], weight = w)
 
     return G
-
-@timeout_decorator.timeout(5, timeout_exception=FunctionTimedOut)
-
-def mutation2(G):
-    t = list(G.nodes())
-    td1 = np.random.randint(0, len(t))
-    td2 = np.random.randint(0, len(t))
-    l1 = list(G.edges(t[td1]))
-    l2 = list(G.edges(t[td2]))
-    for item in l1:
-        x = np.random.randint(0, 2)
-        if x % 2 == 0:
-            w =  G.get_edge_data(item[0], item[1])['weight']
-            G.remove_edge(item[0],item[1])
-            G.add_edge(t[td2],item[1], weight = w)
-    for item in l2:
-        x = np.random.randint(0, 2)
-        if x % 2 == 0:
-            if  G.has_edge(item[0], item[1])==True:
-                w =  G.get_edge_data(item[0], item[1])['weight']
-                G.remove_edge(item[0],item[1])
-                G.add_edge(t[td1],item[1], weight = w)
-
-    return G
-
 
 @timeout_decorator.timeout(5, timeout_exception=FunctionTimedOut)
 def min_cut_edge(G):
@@ -175,16 +147,16 @@ def fitness(x):
             g = 15
             print(g)
 
-        try:
-            m = get_size(x)
-            print(m)
-        except FunctionTimedOut:
-            m = 10
-            print(m)
+        #try:
+        #    g = time_delay(x)
+        #    print(g)
+        #except FunctionTimedOut:
+        #    g = 15
+        #   print(g)
 
-        #s=(f/(max_degree(x)+avg_degree(x))+g+m)
+        s=(f/(max_degree(x)+avg_degree(x))+g)
         #print((max_degree(x)+avg_degree(x)))
-        return ([f,g,max_degree(x),avg_degree(x),m])#+min_cut_edge(x,) 
+        return ([f,g,max_degree(x),avg_degree(x),x.size(weight='weight')])#+min_cut_edge(x,) 
     else:
         return 1 #(
 
@@ -228,8 +200,10 @@ for q in range(niter):
     children_score = []
     # score = score/np.sum(score)
     for i in range(int(n/2)):
+        print(score)
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
+        print(100)
         if child_option == 0:
              if nx.is_empty(a)==False and nx.is_empty(b)==False:
                 while(nx.is_connected(a)==False):
@@ -262,10 +236,8 @@ for q in range(niter):
     for i in range(n):
         x = np.random.choice(100)
         if x < mutation_rate:
-            try:
-                t = mutation2(G)
-            except FunctionTimedOut:    
-                t = G    
+            t = mutation(G)
+
             while(nx.is_connected(t)==False):
                 t = mutation(t)            
             genes[i] = t
