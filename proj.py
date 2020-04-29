@@ -173,7 +173,7 @@ for line in f:
 
 #generate initial population
 
-genes.append(G)
+# genes.append(G)
 # t = mutation(G)
 # print(n)
 for i in range(n):
@@ -183,7 +183,7 @@ for i in range(n):
         # print('here1')
     genes.append(t)
     # print('here2')
-n = n+1
+# n = n+1
 # genes = [1,2,3,4,5,6,7,7,8,10]
 score = []
 scoret = []
