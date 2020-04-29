@@ -87,7 +87,8 @@ def normalize(scoret):
     tmax = np.max(scoret, axis = 0)
     score = []
     for i in scoret:
-        score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3])+(i[4]/tmax[4])))
+        score.append((i[0])/((i[1])+(i[2])+(i[3])+(i[4])))
+        #score.append((i[0]/tmax[0])/((i[1]/tmax[1])+(i[2]/tmax[2])+(i[3]/tmax[3])+(i[4]/tmax[4])))
     return score
 
 def mutation(G):
