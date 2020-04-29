@@ -58,7 +58,7 @@ def fillin(Gc1):
     return Gc1
 
 
-def add_new_node(G):
+def add_new_node(G, w):
 
     t = list(G.nodes())
     for item in t:
@@ -66,7 +66,7 @@ def add_new_node(G):
     maxi = int(max(t))
     maxi += 1
     td = np.random.randint(0, len(t))
-    G.add_edge(str(maxi), t[td])
+    G.add_edge(str(maxi), t[td],weight = w)
     return G
 
 
@@ -137,17 +137,17 @@ def time_delay(G):
 def fitness(x):
     if (max_degree(x)+avg_degree(x))!=0:
         try:
-            f = min_cut_edge(x)
-            print(f)
+            f = 1
+            # print(f)
         except FunctionTimedOut:
             f = 20
-            print(f)
+            # print(f)
         try:
-            g = time_delay(x)
-            print(g)
+            g = 2
+            # print(g)
         except FunctionTimedOut:
             g = 15
-            print(g)
+            # print(g)
         s=(f/(max_degree(x)+avg_degree(x))+g)
         #print((max_degree(x)+avg_degree(x)))
         return ([f,g,max_degree(x),avg_degree(x)])#+min_cut_edge(x,) 
@@ -174,11 +174,12 @@ for line in f:
 #generate initial population
 
 genes.append(G)
-t = mutation(G)
+# t = mutation(G)
 # print(n)
 for i in range(n):
-    while(nx.is_connected(t)==False):
-        t = mutation(t)
+    # while(nx.is_connected(t)==False):
+    t = add_new_node(G,1)
+        # t = mutation(t)
         # print('here1')
     genes.append(t)
     # print('here2')
@@ -194,10 +195,10 @@ for q in range(niter):
     children_score = []
     # score = score/np.sum(score)
     for i in range(int(n/2)):
-        print(score)
+        # print(score)
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
-        print(100)
+        # print(100)
         if child_option == 0:
              if nx.is_empty(a)==False and nx.is_empty(b)==False:
                 while(nx.is_connected(a)==False):
@@ -227,6 +228,7 @@ for q in range(niter):
     genes = [x for _,x in sorted(zip(score,genes), key = lambda x: x[0], reverse = True)][:n]
     scoret = [x for _,x in sorted(zip(score,scoret), key = lambda x: x[0], reverse = True)][:n]
     score = sorted(score , reverse = True)[:n]
+    print(scoret)
     for i in range(n):
         x = np.random.choice(100)
         if x < mutation_rate:
@@ -235,7 +237,6 @@ for q in range(niter):
                 t = mutation(t)            
             genes[i] = t
             scoret[i] = fitness(genes[i])
-            score = normalize(scoret)
-    print('here')
-print(score)
+    score = normalize(scoret)
+    # print('here')
 print(genes)
