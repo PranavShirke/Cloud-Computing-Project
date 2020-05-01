@@ -5,6 +5,7 @@ from numpy import random
 from func_timeout import func_timeout, FunctionTimedOut
 import time
 import timeout_decorator
+import sys
 
 
 def crossover (G1,G2):
@@ -139,10 +140,12 @@ def fitness(x):
             f = min_cut_edge(x)
         except FunctionTimedOut:
             f = 20
+            #print(f)
         try:
             g = time_delay(x)
         except FunctionTimedOut:
             g = 15
+            #print(g)
 
         #try:
         #    g = time_delay(x)
@@ -158,11 +161,12 @@ def fitness(x):
         return 1 #(
 
 mutation_rate = 5
+g = sys.argv[1]
 n = 9 #number of genes
 niter = 10
 child_option = 1 #whether to mutate children if disconnected or wether to simply drop them
 genes = []
-f = open("test.txt","r")
+f = open(g,"r")
 G = nx.Graph()
 i =  0
 for line in f:
@@ -193,6 +197,7 @@ for i in range(n):
     scoret.append(fitness(genes[i]))
 score = normalize(scoret)
 for q in range(niter):
+    print('Entered iteration'+str(q))
     children = []
     children_score = []
     # score = score/np.sum(score)
