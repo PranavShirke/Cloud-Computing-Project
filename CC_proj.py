@@ -137,16 +137,12 @@ def fitness(x):
     if (max_degree(x)+avg_degree(x))!=0:
         try:
             f = min_cut_edge(x)
-            print(f)
         except FunctionTimedOut:
             f = 20
-            print(f)
         try:
             g = time_delay(x)
-            print(g)
         except FunctionTimedOut:
             g = 15
-            print(g)
 
         #try:
         #    g = time_delay(x)
@@ -201,10 +197,8 @@ for q in range(niter):
     children_score = []
     # score = score/np.sum(score)
     for i in range(int(n/2)):
-        print(score)
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
-        print(100)
         if child_option == 0:
              if nx.is_empty(a)==False and nx.is_empty(b)==False:
                 while(nx.is_connected(a)==False):
