@@ -5,8 +5,27 @@ from numpy import random
 from func_timeout import func_timeout, FunctionTimedOut
 import time
 import timeout_decorator
-import sys
+#from plot import plot_results
+import matplotlib.pyplot as plt
+import numpy as np
 
+#def plot_results(scores, rotate=True):
+    #scores_arr = np.array(scores)
+    #if rotate == True:
+    #    scores_arr = scores_arr.T
+    #for i, step in enumerate(scores):
+    #    plt.plot(step, label='Gene'+str(i+1))
+#    plt.ylabel('Fitness Scores of Networks')
+#    plt.xlabel('Genetic Algorithm iteration')
+#    plt.legend()
+#   plt.show()
+def plot_results(sol):
+    for i in range(len(sol)):
+        plt.plot(sol[i], label='Gene'+str(i+1))
+    plt.ylabel('Fitness Scores of Networks')
+    plt.xlabel('Genetic Algorithm iteration')
+    plt.legend()
+    plt.show()
 
 def crossover (G1,G2):
 
@@ -140,12 +159,10 @@ def fitness(x):
             f = min_cut_edge(x)
         except FunctionTimedOut:
             f = 20
-            #print(f)
         try:
             g = time_delay(x)
         except FunctionTimedOut:
             g = 15
-            #print(g)
 
         #try:
         #    g = time_delay(x)
@@ -193,18 +210,20 @@ n = n+1
 # genes = [1,2,3,4,5,6,7,7,8,10]
 score = []
 scoret = []
+log = []
+children_log = []
+for i in range(n):
+    children_log.append([])
 for i in range(n):
     scoret.append(fitness(genes[i]))
 score = normalize(scoret)
-k=0
-sol=[[]*n]
 for q in range(niter):
-    print('Entered iteration'+str(q))
     children = []
     children_score = []
+
     # score = score/np.sum(score)
+    print('Entered iteration: {} of {}'.format(q+1, n))
     for i in range(int(n/2)):
-        print(i)
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
         if child_option == 0:
@@ -246,15 +265,10 @@ for q in range(niter):
             genes[i] = t
             scoret[i] = fitness(genes[i])
             score = normalize(scoret)
+    for i in range(n):
+        children_log[i].append(score[i])
     print(score)
-    #for i in (range((n))):
-    #    sol[k].append(score[i])
-    #    k=k+1
+    #log.append(children_log)
 print(score)
 print(genes)
-#for i in range(len(sol)):
-#    plt.plot(sol[i], label='Gene'+str(i+1))
-#plt.ylabel('Fitness Scores of Networks')
-#plt.xlabel('Genetic Algorithm iteration')
-#plt.legend()
-#plt.show()
+plot_results(children_log)
