@@ -196,12 +196,15 @@ scoret = []
 for i in range(n):
     scoret.append(fitness(genes[i]))
 score = normalize(scoret)
+k=0
+sol=[[]*n]
 for q in range(niter):
     print('Entered iteration'+str(q))
     children = []
     children_score = []
     # score = score/np.sum(score)
     for i in range(int(n/2)):
+        print(i)
         x = np.random.choice(n, 2, p=score/np.sum(score))
         a, b = crossover(genes[x[0]],genes[x[1]])
         if child_option == 0:
@@ -244,5 +247,14 @@ for q in range(niter):
             scoret[i] = fitness(genes[i])
             score = normalize(scoret)
     print(score)
+    #for i in (range((n))):
+    #    sol[k].append(score[i])
+    #    k=k+1
 print(score)
 print(genes)
+#for i in range(len(sol)):
+#    plt.plot(sol[i], label='Gene'+str(i+1))
+#plt.ylabel('Fitness Scores of Networks')
+#plt.xlabel('Genetic Algorithm iteration')
+#plt.legend()
+#plt.show()
