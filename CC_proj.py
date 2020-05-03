@@ -19,13 +19,13 @@ import numpy as np
 #    plt.xlabel('Genetic Algorithm iteration')
 #    plt.legend()
 #   plt.show()
-def plot_results(sol):
-    for i in range(len(sol)):
-        plt.plot(sol[i], label='Gene'+str(i+1))
-    plt.ylabel('Fitness Scores of Networks')
-    plt.xlabel('Genetic Algorithm iteration')
-    plt.legend()
-    plt.show()
+#def plot_results(sol):
+#    for i in range(len(sol)):
+#        plt.plot(sol[i], label='Gene'+str(i+1))
+#    plt.ylabel('Fitness Scores of Networks')
+#    plt.xlabel('Genetic Algorithm iteration')
+#    plt.legend()
+#    plt.show()
 
 def crossover (G1,G2):
 
